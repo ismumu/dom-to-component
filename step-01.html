@@ -46,7 +46,8 @@
         changeLikeText () {
             const likeText = document.querySelector('.like-text');
 
-            console.log(likeText)
+            console.log(likeText);
+            console.log('这里只获取了第一个dom。所以不管点击那个按钮   都是第一个按钮文案进行改变');
 
             this.state.isLiked = !this.state.isLiked;
             likeText.innerHTML = this.state.isLiked ? '取消' : '点赞';

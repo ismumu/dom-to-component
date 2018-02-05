@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    
+    
+<div class='wrapper'></div>
+
+<script>
+
+
+// 状态改变 -> 构建新的 DOM 元素更新页面
+// 这里要提出的一种解决方案：一旦状态发生改变，就重新调用 render 方法，构建一个新的 DOM 元素。
+// 这样做的好处是什么呢？好处就是你可以在 render 方法里面使用最新的 this.state 来构造不同 HTML 结构的字符串，并且通过这个字符串构造不同的 DOM 元素。页面就更新了
+
+
+
+    class LikeButton {
+
+        constructor () {
+            this.state = {
+                isLiked: false,
+            }
+        }
+
+        setState (state) {
+
+            const oldEl = this.el;
+
+            this.state = state;
+            this.el = this.render();
+
+            if( this.onStateChange ) this.onStateChange(oldEl, this.el);
+
+        }
+
+        changeLikeText () {
+            this.setState({
+                isLiked: !this.state.isLiked
+            })
+        }
+
+        createDomFromString (domString) {
+            const div = document.createElement('div');
+            div.innerHTML = domString;
+            return div;
+        }
+
+        render () {
+
+            this.el = this.createDomFromString(`
+                <button class='like-btn'>
+                    <span class='like-text'>${this.state.isLiked ? '取消' : '点赞'}</span>
+                    <span>👍</span>
+                </button>
+            `);
+            
+            
+            this.el.addEventListener('click', this.changeLikeText.bind(this));
+
+            return this.el;
+        }
+    }
+
+    // 然后可以用这个类来构建不同的点赞功能的实例，然后把它们插到页面中。
+    const wrapper = document.querySelector('.wrapper')
+    const likeButton = new LikeButton();
+    wrapper.appendChild(likeButton.render());
+
+    likeButton.onStateChange = ( oldEl, newEl ) => {
+        wrapper.insertBefore(newEl, oldEl);
+        wrapper.removeChild(oldEl);
+    }
+
+
+
+
+
+</script>
+
+
+
+</body>
+</html>
